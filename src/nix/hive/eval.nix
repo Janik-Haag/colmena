@@ -3,6 +3,7 @@
 , hermetic ? rawFlake != null  # Whether we are allowed to use <nixpkgs>
 , colmenaOptions ? import ./options.nix
 , colmenaModules ? import ./modules.nix
+, customEvalConfig ? null
 }:
 with builtins;
 let
@@ -119,7 +120,7 @@ let
       if hasAttr name hive.meta.nodeNixpkgs
       then mkNixpkgs "meta.nodeNixpkgs.${name}" hive.meta.nodeNixpkgs.${name}
       else nixpkgs;
-    evalConfig = import (npkgs.path + "/nixos/lib/eval-config.nix");
+    evalConfig = if customEvalConfig == null then import (npkgs.path + "/nixos/lib/eval-config.nix") else customEvalConfig;
 
     # Here we need to merge the configurations in meta.nixpkgs
     # and in machine config.
